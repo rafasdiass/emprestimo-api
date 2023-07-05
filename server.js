@@ -4,6 +4,8 @@ const mongoose = require('mongoose');
 const Loan = require('./Loan');
 const Joi = require('@hapi/joi');
 const cpfCnpjValidator = require('cpf-cnpj-validator');
+const loanController = require('./loanController');
+
 const app = express();
 
 mongoose.connect('mongodb://localhost:27017/emprestimo', { useNewUrlParser: true, useUnifiedTopology: true });
@@ -77,7 +79,8 @@ app.get('/loan-status/:id', async (req, res) => {
     }
 
     if (loan.loanValue <= loan.activeDebt / 2 && loan.loanValue <= 50000) {
-      return res.send({ status: 'Empréstimo aprovado' });
+           return res.send({ status: 'Empréstimo aprovado' });
+
     } else {
       return res.send({ status: 'Empréstimo negado' });
     }
