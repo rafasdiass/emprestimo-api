@@ -25,7 +25,7 @@ app.listen(port, () => {
     console.log(`Server running at http://localhost:${port}/`);
 });
 
-// Definir o esquema de validação usando Joi
+
 const loanSchema = Joi.object({
     personType: Joi.string().valid('PF', 'PJ').required(),
     document: Joi.string().required(),
@@ -36,19 +36,19 @@ const loanSchema = Joi.object({
 });
 
 app.post('/loan', async (req, res) => {
-  const { error } = loanSchema.validate(req.body);
-  
-  if (error) return res.status(400).send(error.details[0].message);
+  const loan = new Loan({
+    personType: req.body.personType,
+    document: req.body.document,
+    name: req.body.name,
+    documentNumber: req.body.documentNumber,
+    activeDebt: req.body.activeDebt,
+    loanValue: req.body.loanValue,
+  });
 
-  const loan = new Loan(req.body);
-
-  // Aqui, adicionaremos a lógica para verificar se o empréstimo é válido de acordo com as regras que você forneceu.
-  
   try {
-      await loan.save();
-      res.send('Empréstimo aprovado');
+    await loan.save();
+    res.send('Empréstimo aprovado');
   } catch (err) {
-      res.status(400).send(err);
+    res.status(400).send(err.message);
   }
 });
-//
