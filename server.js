@@ -4,7 +4,6 @@ const mongoose = require('mongoose');
 const Loan = require('./Loan');
 const Joi = require('@hapi/joi');
 const cpfCnpjValidator = require('cpf-cnpj-validator');
-const loanController = require('./loanController');
 
 const app = express();
 
@@ -21,12 +20,6 @@ app.use(cors());
 
 app.get('/', (req, res) => {
   res.send('Hello World!');
-});
-
-const port = process.env.PORT || 3000;
-
-app.listen(port, () => {
-  console.log(`Server running at http://localhost:${port}/`);
 });
 
 // Definir o esquema de validação usando Joi
@@ -58,15 +51,17 @@ const loanSchema = Joi.object({
 app.post('/loan', async (req, res) => {
   const { error } = loanSchema.validate(req.body);
   
-  if (error) return res.status(400).send(error.details[0].message);
+  if (error) {
+    return res.status(400).json({ message: error.details[0].message });
+  }
 
   const loan = new Loan(req.body);
 
   try {
     await loan.save();
-    res.send({ message: 'Empréstimo aprovado', loanId: loan._id });
+    res.status(200).json({ message: 'Empréstimo aprovado', loanId: loan._id });
   } catch (err) {
-    res.status(400).send(err);
+    res.status(500).json({ message: 'Erro interno do servidor', error: err.message });
   }
 });
 
@@ -75,16 +70,21 @@ app.get('/loan-status/:id', async (req, res) => {
     const loan = await Loan.findById(req.params.id);
 
     if (!loan) {
-      return res.status(404).send('Empréstimo não encontrado.');
+      return res.status(404).json({ status: 'Empréstimo não encontrado' });
     }
 
     if (loan.loanValue <= loan.activeDebt / 2 && loan.loanValue <= 50000) {
-           return res.send({ status: 'Empréstimo aprovado' });
-
+      return res.status(200).json({ status: 'Empréstimo aprovado' });
     } else {
-      return res.send({ status: 'Empréstimo negado' });
+      return res.status(200).json({ status: 'Empréstimo negado' });
     }
   } catch (error) {
-    return res.status(500).send('Erro interno do servidor.');
+    return res.status(500).json({ status: 'Erro interno do servidor', error: error.message });
   }
+});
+
+const port = process.env.PORT || 3000;
+
+app.listen(port, () => {
+  console.log(`Server running at http://localhost:${port}/`);
 });
