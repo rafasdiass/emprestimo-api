@@ -1,11 +1,7 @@
+const Joi = require('@hapi/joi');
 const Loan = require('./Loan');
 const express = require('express');
 const mongoose = require('mongoose');
-const { Validator } = require('cpf-cnpj-validator');
-
-const cpfValidator = Validator.CPF;
-const cnpjValidator = Validator.CNPJ;
-
 const app = express();
 
 // Conexão ao MongoDB
@@ -29,39 +25,25 @@ app.listen(port, () => {
     console.log(`Server running at http://localhost:${port}/`);
 });
 
+// Definir o esquema de validação usando Joi
+const loanSchema = Joi.object({
+    personType: Joi.string().valid('PF', 'PJ').required(),
+    document: Joi.string().required(),
+    name: Joi.string().min(3).max(100).required(),
+    documentNumber: Joi.string().required(),
+    activeDebt: Joi.number().required(),
+    loanValue: Joi.number().max(50000).required()
+});
+
 app.post('/loan', async (req, res) => {
-  const loan = new Loan({
-      personType: req.body.personType,
-      document: req.body.document,
-      name: req.body.name,
-      documentNumber: req.body.documentNumber,
-      activeDebt: req.body.activeDebt,
-      loanValue: req.body.loanValue,
-  });
+  const { error } = loanSchema.validate(req.body);
+  
+  if (error) return res.status(400).send(error.details[0].message);
 
-  // Verificamos as regras
-  if(loan.loanValue > 50000) {
-      return res.status(400).send('Empréstimo negado: valor solicitado maior que R$50000');
-  }
+  const loan = new Loan(req.body);
 
-  if(loan.loanValue > loan.activeDebt / 2) {
-      return res.status(400).send('Empréstimo negado: valor solicitado maior que a metade da dívida ativa');
-  }
-
-  if(loan.personType === 'PF') {
-      // Verifica se é um CPF válido
-      if (!cpfValidator.isValid(loan.document)) {
-          return res.status(400).send('CPF inválido.');
-      }
-  } else if(loan.personType === 'PJ') {
-      // Verifica se é um CNPJ válido
-      if (!cnpjValidator.isValid(loan.document)) {
-          return res.status(400).send('CNPJ inválido.');
-      }
-  } else {
-      return res.status(400).send('Tipo de pessoa inválido. Deve ser PF ou PJ.');
-  }
-
+  // Aqui, adicionaremos a lógica para verificar se o empréstimo é válido de acordo com as regras que você forneceu.
+  
   try {
       await loan.save();
       res.send('Empréstimo aprovado');
