@@ -1,12 +1,11 @@
+const express = require('express');
+const cors = require('cors');
+const mongoose = require('mongoose');
+const Loan = require('./Loan');
 const Joi = require('@hapi/joi');
 const cpfCnpjValidator = require('cpf-cnpj-validator');
-const Loan = require('./Loan');
-const cors = require('cors');
-const express = require('express');
-const mongoose = require('mongoose');
 const app = express();
 
-// Conexão ao MongoDB
 mongoose.connect('mongodb://localhost:27017/emprestimo', { useNewUrlParser: true, useUnifiedTopology: true });
 
 const db = mongoose.connection;
@@ -19,39 +18,39 @@ app.use(express.json());
 app.use(cors());
 
 app.get('/', (req, res) => {
-    res.send('Hello World!');
+  res.send('Hello World!');
 });
 
 const port = process.env.PORT || 3000;
 
 app.listen(port, () => {
-    console.log(`Server running at http://localhost:${port}/`);
+  console.log(`Server running at http://localhost:${port}/`);
 });
 
 // Definir o esquema de validação usando Joi
 const loanSchema = Joi.object({
-    personType: Joi.string().valid('PF', 'PJ').required(),
-    document: Joi.string().custom((value, helper) => {
-      if (helper.state.ancestors[0].personType === 'PF') {
-        if (!cpfCnpjValidator.cpf.isValid(value)) {
-          return helper.message('CPF inválido');
-        }
-      } else if (helper.state.ancestors[0].personType === 'PJ') {
-        if (!cpfCnpjValidator.cnpj.isValid(value)) {
-          return helper.message('CNPJ inválido');
-        }
+  personType: Joi.string().valid('PF', 'PJ').required(),
+  document: Joi.string().custom((value, helper) => {
+    if (helper.state.ancestors[0].personType === 'PF') {
+      if (!cpfCnpjValidator.cpf.isValid(value)) {
+        return helper.message('CPF inválido');
       }
-      return true;
-    }, 'Validação de documento').required(),
-    name: Joi.string().min(3).max(100).required(),
-    documentNumber: Joi.string().required(),
-    activeDebt: Joi.number().required(),
-    loanValue: Joi.number().max(50000).custom((value, helper) => {
-      if (value > helper.state.ancestors[0].activeDebt / 2) {
-        return helper.message('O valor do empréstimo não pode ser maior que a metade da dívida ativa');
+    } else if (helper.state.ancestors[0].personType === 'PJ') {
+      if (!cpfCnpjValidator.cnpj.isValid(value)) {
+        return helper.message('CNPJ inválido');
       }
-      return true;
-    }, 'Validação de valor de empréstimo').required()
+    }
+    return true;
+  }, 'Validação de documento').required(),
+  name: Joi.string().min(3).max(100).required(),
+  documentNumber: Joi.string().required(),
+  activeDebt: Joi.number().required(),
+  loanValue: Joi.number().max(50000).custom((value, helper) => {
+    if (value > helper.state.ancestors[0].activeDebt / 2) {
+      return helper.message('O valor do empréstimo não pode ser maior que a metade da dívida ativa');
+    }
+    return true;
+  }, 'Validação de valor de empréstimo').required()
 });
 
 app.post('/loan', async (req, res) => {
@@ -61,12 +60,28 @@ app.post('/loan', async (req, res) => {
 
   const loan = new Loan(req.body);
 
-  // Aqui, adicionaremos a lógica para verificar se o empréstimo é válido de acordo com as regras que você forneceu.
-  
   try {
-      await loan.save();
-      res.send('Empréstimo aprovado');
+    await loan.save();
+    res.send({ message: 'Empréstimo aprovado', loanId: loan._id });
   } catch (err) {
-      res.status(400).send(err);
+    res.status(400).send(err);
+  }
+});
+
+app.get('/loan-status/:id', async (req, res) => {
+  try {
+    const loan = await Loan.findById(req.params.id);
+
+    if (!loan) {
+      return res.status(404).send('Empréstimo não encontrado.');
+    }
+
+    if (loan.loanValue <= loan.activeDebt / 2 && loan.loanValue <= 50000) {
+      return res.send({ status: 'Empréstimo aprovado' });
+    } else {
+      return res.send({ status: 'Empréstimo negado' });
+    }
+  } catch (error) {
+    return res.status(500).send('Erro interno do servidor.');
   }
 });
