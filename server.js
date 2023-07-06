@@ -57,29 +57,35 @@ app.post('/loan', async (req, res) => {
 
   const loan = new Loan(req.body);
 
-  try {
-    await loan.save();
-    res.status(200).json({ message: 'Empréstimo aprovado', loanId: loan._id });
-  } catch (err) {
-    res.status(500).json({ message: 'Erro interno do servidor', error: err.message });
-  }
+try {
+  await loan.save();
+  console.log('Empréstimo criado:', loan);  
+  res.status(200).json({ message: 'Empréstimo aprovado', loanId: loan._id });
+} catch (err) {
+  res.status(500).json({ message: 'Erro interno do servidor', error: err.message });
+}
 });
 
-app.get('/loan-status/:id', async (req, res) => {
+app.get('/loan-status', async (req, res) => {
+  const name = req.query.name;
+  const documentNumber = req.query.documentNumber;
+
   try {
-    const loan = await Loan.findById(req.params.id);
+    const loan = await Loan.findOne({ name, documentNumber });
+
+    res.setHeader('Content-Type', 'application/json'); // Define explicitamente o 'Content-Type'
 
     if (!loan) {
-      return res.status(404).json({ status: 'Empréstimo não encontrado' });
+      return res.status(404).json({ status: 'Empréstimo não encontrado', loanId: null });
     }
 
     if (loan.loanValue <= loan.activeDebt / 2 && loan.loanValue <= 50000) {
-      return res.status(200).json({ status: 'Empréstimo aprovado' });
+      return res.status(200).json({ status: 'Empréstimo aprovado', loanId: loan._id });
     } else {
-      return res.status(200).json({ status: 'Empréstimo negado' });
+      return res.status(200).json({ status: 'Empréstimo negado', loanId: loan._id });
     }
   } catch (error) {
-    return res.status(500).json({ status: 'Erro interno do servidor', error: error.message });
+    return res.status(500).json({ status: 'Erro interno do servidor', loanId: null, error: error.message });
   }
 });
 
