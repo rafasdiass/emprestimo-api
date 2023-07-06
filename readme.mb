@@ -1,81 +1,88 @@
-<h1 align="center">emprestimo-api</h1>
+# emprestimo-api
+
 API criada para gerenciar o processo de empréstimos. Esse backend foi desenvolvido usando Node.js e MongoDB.
 
-<h2> Início </h2>
+## Início
+
 Essas instruções fornecerão uma cópia do projeto em execução na sua máquina local para fins de desenvolvimento e teste.
 
-<h3>Pré-requisitos</h3>
+### Pré-requisitos
+
 O que você precisa para instalar o software:
 
-<ul>
-    <li>Node.js</li>
-    <li>MongoDB</li>
-</ul>
-<h3>Instalação</h3>
+- Node.js
+- MongoDB
+
+### Instalação
+
 Clone o projeto usando git (recomendado):
 
-<pre>
 git clone https://github.com/rafasdiass/emprestimo-api.git
-</pre>
+
+
 Navegue até o diretório do projeto:
 
-<pre>
 cd emprestimo-api
-</pre>
+
+
 Instale as dependências:
 
-<pre>
 npm install
-</pre>
-<h3>Configuração do Banco de Dados</h3>
+
+
+### Configuração do Banco de Dados
+
 Este projeto usa MongoDB como banco de dados. Para configurá-lo:
 
-<ol>
-    <li>Instale o MongoDB em sua máquina.</li>
-    <li>Inicie o MongoDB.</li>
-    <li>No arquivo principal do projeto (`index.js`), a conexão com o MongoDB é estabelecida com a URL 'mongodb://localhost:27017/emprestimo'. Certifique-se de que o MongoDB esteja em execução nesta porta.</li>
-</ol>
-<h2>Uso</h2>
+1. Instale o MongoDB em sua máquina.
+2. Inicie o MongoDB.
+3. No arquivo principal do projeto (`index.js`), a conexão com o MongoDB é estabelecida com a URL 'mongodb://localhost:27017/emprestimo'. Certifique-se de que o MongoDB esteja em execução nesta porta.
+
+## Uso
+
 Inicie o servidor:
 
-<pre>
-npm start
-</pre>
+npm star
+
+
 O servidor estará em execução no endereço: http://localhost:3000.
 
-<h2>Rotas da API</h2>
-<h3>POST /loan</h3>
+## Rotas da API
+
+### POST /loan
+
 Cria um novo pedido de empréstimo.
 
 O corpo da requisição deve incluir:
 
-<ul>
-    <li>`personType`: Tipo de pessoa ('PF' para Pessoa Física, 'PJ' para Pessoa Jurídica)</li>
-    <li>`document`: Documento da pessoa (CPF para Pessoa Física, CNPJ para Pessoa Jurídica)</li>
-    <li>`name`: Nome da pessoa</li>
-    <li>`documentNumber`: Número do documento</li>
-    <li>`activeDebt`: Dívida ativa</li>
-    <li>`loanValue`: Valor solicitado para o empréstimo</li>
-</ul>
-<h3>GET /loan-status</h3>
+- `personType`: Tipo de pessoa ('PF' para Pessoa Física, 'PJ' para Pessoa Jurídica)
+- `document`: Documento da pessoa (CPF para Pessoa Física, CNPJ para Pessoa Jurídica)
+- `name`: Nome da pessoa
+- `documentNumber`: Número do documento
+- `activeDebt`: Dívida ativa
+- `loanValue`: Valor solicitado para o empréstimo
+
+### GET /loan-status
+
 Consulta o status de um empréstimo baseado no nome e no número do documento.
 
 Os parâmetros da consulta devem incluir:
 
-<ul>
-    <li>`name`: Nome da pessoa</li>
-    <li>`documentNumber`: Número do documento</li>
-</ul>
-<h2>Licença</h2>
+- `name`: Nome da pessoa
+- `documentNumber`: Número do documento
+
+## Licença
+
 Este projeto está licenciado sob a Licença ISC - consulte o arquivo LICENSE.md para obter mais detalhes.
 
-<h2>Autor</h2>
+## Autor
+
 Rafael de Souza
-<h2>Dependências Usadas</h2>
-<ul>
-    <li><a href="https://www.npmjs.com/package/@hapi/joi">@hapi/joi</a> - Usado para validar os dados de entrada do usuário</li>
-    <li><a href="https://www.npmjs.com/package/cors">cors</a> - Usado para habilitar CORS</li>
-    <li><a href="https://www.npmjs.com/package/cpf-cnpj-validator">cpf-cnpj-validator</a> - Usado para validar CPF e CNPJ</li>
-    <li><a href="https://www.npmjs.com/package/express">express</a> - Usado para criar o servidor da API</li>
-    <li><a href="https://www.npmjs.com/package/mongoose">mongoose</a> - Usado para modelar os dados para o MongoDB</li>
-</ul>
+
+## Dependências Usadas
+
+- [@hapi/joi](https://www.npmjs.com/package/@hapi/joi) - Usado para validar os dados de entrada do usuário
+- [cors](https://www.npmjs.com/package/cors) - Usado para habilitar CORS
+- [cpf-cnpj-validator](https://www.npmjs.com/package/cpf-cnpj-validator) - Usado para validar CPF e CNPJ
+- [express](https://www.npmjs.com/package/express) - Usado para criar o servidor da API
+- [mongoose](https://www.npmjs.com/package/mongoose) - Usado para modelar os dados para o MongoDB
