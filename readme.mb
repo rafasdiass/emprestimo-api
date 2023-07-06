@@ -1,10 +1,10 @@
 # emprestimo-api
 
-API criada para gerenciar o processo de empréstimos. Esse backend foi desenvolvido usando Node.js e MongoDB.
+Este é um backend desenvolvido usando Node.js e MongoDB para gerenciar o processo de empréstimos.
 
 ## Início
 
-Essas instruções fornecerão uma cópia do projeto em execução na sua máquina local para fins de desenvolvimento e teste.
+Essas instruções lhe fornecerão uma cópia do projeto em execução na sua máquina local para fins de desenvolvimento e teste.
 
 ### Pré-requisitos
 
@@ -17,72 +17,57 @@ O que você precisa para instalar o software:
 
 Clone o projeto usando git (recomendado):
 
+
 git clone https://github.com/rafasdiass/emprestimo-api.git
-
-
 Navegue até o diretório do projeto:
 
+
 cd emprestimo-api
-
-
 Instale as dependências:
 
+
 npm install
-
-
-### Configuração do Banco de Dados
-
+Configuração do Banco de Dados
 Este projeto usa MongoDB como banco de dados. Para configurá-lo:
 
-1. Instale o MongoDB em sua máquina.
-2. Inicie o MongoDB.
-3. No arquivo principal do projeto (`index.js`), a conexão com o MongoDB é estabelecida com a URL 'mongodb://localhost:27017/emprestimo'. Certifique-se de que o MongoDB esteja em execução nesta porta.
-
-## Uso
-
+Instale o MongoDB em sua máquina.
+Inicie o MongoDB.
+No arquivo principal do projeto (index.js), a conexão com o MongoDB é estabelecida com a URL 'mongodb://localhost:27017/emprestimo'. Certifique-se de que o MongoDB esteja em execução nesta porta.
+Uso
 Inicie o servidor:
 
-npm star
 
-
+npm start
 O servidor estará em execução no endereço: http://localhost:3000.
 
-## Rotas da API
-
-### POST /loan
-
+Rotas da API
+POST /loan
 Cria um novo pedido de empréstimo.
 
 O corpo da requisição deve incluir:
 
-- `personType`: Tipo de pessoa ('PF' para Pessoa Física, 'PJ' para Pessoa Jurídica)
-- `document`: Documento da pessoa (CPF para Pessoa Física, CNPJ para Pessoa Jurídica)
-- `name`: Nome da pessoa
-- `documentNumber`: Número do documento
-- `activeDebt`: Dívida ativa
-- `loanValue`: Valor solicitado para o empréstimo
-
-### GET /loan-status
-
+personType: Tipo de pessoa ('PF' para Pessoa Física, 'PJ' para Pessoa Jurídica)
+document: Documento da pessoa (CPF para Pessoa Física, CNPJ para Pessoa Jurídica)
+name: Nome da pessoa
+documentNumber: Número do documento
+activeDebt: Dívida ativa
+loanValue: Valor solicitado para o empréstimo
+GET /loan-status
 Consulta o status de um empréstimo baseado no nome e no número do documento.
 
 Os parâmetros da consulta devem incluir:
 
-- `name`: Nome da pessoa
-- `documentNumber`: Número do documento
-
-## Licença
-
+name: Nome da pessoa
+documentNumber: Número do documento
+Licença
 Este projeto está licenciado sob a Licença ISC - consulte o arquivo LICENSE.md para obter mais detalhes.
 
-## Autor
-
+Autor
 Rafael de Souza
 
-## Dependências Usadas
-
-- [@hapi/joi](https://www.npmjs.com/package/@hapi/joi) - Usado para validar os dados de entrada do usuário
-- [cors](https://www.npmjs.com/package/cors) - Usado para habilitar CORS
-- [cpf-cnpj-validator](https://www.npmjs.com/package/cpf-cnpj-validator) - Usado para validar CPF e CNPJ
-- [express](https://www.npmjs.com/package/express) - Usado para criar o servidor da API
-- [mongoose](https://www.npmjs.com/package/mongoose) - Usado para modelar os dados para o MongoDB
+Dependências Usadas
+@hapi/joi - Usado para validar os dados de entrada do usuário
+cors - Usado para habilitar CORS
+cpf-cnpj-validator - Usado para validar CPF e CNPJ
+express - Usado para criar o servidor da API
+mongoose - Usado para modelar os dados para o MongoDB
